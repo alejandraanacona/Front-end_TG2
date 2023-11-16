@@ -41,7 +41,7 @@
         <camt>Datos sensor LÌDAR</camt>
 
         <div class="box datoslidar">
-        <span>mensaje de java: {{ resBack }}</span>
+          <span>mensaje de java: {{ resBack }}</span>
 
 
         </div>
@@ -60,26 +60,61 @@ import Stomp from 'stompjs'
 //axios
 export default {
   data() {
-        return {
-          resBack:"",
-          stompClient:null
-        };
+    return {
+      resBack: "",
+      stompClient: null
+    };
   },
 
+
   methods: {
-    conectarWebSocket(){
-      const socket = new SockJS('/ws');
+
+    connect() {
+      let socket = new SockJS('http://localhost:5430/ws');
       this.stompClient = Stomp.over(socket);
       this.stompClient.connect({}, frame => {
-        console.log('Conectado a WebSocket');
-        var mensajeini="hola prueba";
-        this.stompClient.send("app/ws",mensajeini);
-        this.stompClient.subscribe('/topic/messages', mensaje => {
-          this.resBack = mensaje.body;
-          console.log('Mensaje recibido:', mensaje.body);
+        console.log('Conectado: ' + frame);
+        this.stompClient.subscribe('/topic/messages', greeting => {
+          this.resBack= greeting;
+          //alert(greeting);
         });
+        //this.stompClient.send("/app/receive", {}, "Hola aleja desde frotn");
+
       });
     },
+    sendMessage() {
+      this.stompClient.send("/app/receive", {}, "Hola aleja desde frotn");
+    },
+
+    Iniciar() {
+      // Coloca aquí el código que se ejecutará cuando se haga clic en el botón
+      console.log('Entro en el método iniciar');
+      this.connect();
+    }
+  }
+
+    /*callback (message) {
+      // called when the client receives a STOMP message from the server
+      if (message.body) {
+        alert("got message with body " + message.body)
+      } else {
+        alert("got empty message");
+      }
+    },
+
+    conectarWebSocket() {
+      const socket = new SockJS('http://localhost:5430/ws');
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect({}, function (frame) {
+        console.log('Conectado a WebSocket');
+        this.stompClient.subscribe("/topic/messages", this.callback )// mensaje => {
+     
+        //console.log('Mensaje recibido:', mensaje.body);
+        //});
+      });
+    },
+
+    
 
     desconectarWebSocket() {
       if (this.stompClient) {
@@ -87,15 +122,16 @@ export default {
         console.log('WebSocket desconectado');
       }
     },
+
+
     Iniciar() {
       // Coloca aquí el código que se ejecutará cuando se haga clic en el botón
       console.log('Entro en el método iniciar');
       this.conectarWebSocket();
-     
-    }
-  }
-}
 
+    }
+  }*/
+}
 
 </script>
     
